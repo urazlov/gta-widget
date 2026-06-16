@@ -95,6 +95,24 @@
       calc(3px * var(--scale)) calc(3px * var(--scale)) 0 #000,
       0 calc(2px * var(--scale)) calc(3px * var(--scale)) #000;
   }
+  .earned{
+    font-size: calc(34px * var(--scale));
+    color:#2EE08A;
+    background:none;
+    -webkit-text-fill-color:#2EE08A;
+    -webkit-text-stroke: calc(1px * var(--scale)) var(--star-line);
+    text-shadow:
+      calc(2px * var(--scale)) calc(2px * var(--scale)) 0 #000,
+      0 calc(2px * var(--scale)) calc(3px * var(--scale)) #000;
+  }
+  .sep{
+    font-size: calc(34px * var(--scale));
+    color:#e8e8ea;
+    -webkit-text-fill-color:#e8e8ea;
+    -webkit-text-stroke: calc(1px * var(--scale)) var(--star-line);
+    text-shadow: calc(2px * var(--scale)) calc(2px * var(--scale)) 0 #000;
+    margin: 0 calc(2px * var(--scale));
+  }
   .health-row{
     display:flex; align-items:center; gap: calc(8px * var(--scale));
     margin-top: calc(1px * var(--scale));
@@ -205,6 +223,8 @@
       <div class="health-row">
         <span class="heart">♥</span>
         <span class="pix health" id="health">100</span>
+        <span class="pix sep">/</span>
+        <span class="pix earned" id="earned">+$500</span>
       </div>
       <div class="stars" id="stars"></div>
     </div>
@@ -218,6 +238,11 @@
     <div class="field">
       <label>Деньги ($)</label>
       <input type="number" id="moneyInput" value="60000" min="0">
+    </div>
+
+    <div class="field">
+      <label>Заработано сегодня (+$)</label>
+      <input type="number" id="earnedInput" value="0">
     </div>
 
     <div class="field">
@@ -244,6 +269,7 @@
   // ---------- состояние ----------
   const state = {
     money: num(params.get('money'), 60000),
+    earned: num(params.get('earned'), 0),
     pad: clamp(num(params.get('pad'), 8), 1, 12),
     health: clamp(num(params.get('health'), 100), 0, 100),
     stars: clamp(num(params.get('stars'), 4), 0, 6),
@@ -274,6 +300,10 @@
     // деньги
     const m = Math.max(0, state.money).toString().padStart(state.pad, '0');
     $('#money').textContent = '$' + m;
+
+    // заработано сегодня (+сумма) — показываем всегда, в т.ч. 0
+    const sign = state.earned < 0 ? '-' : '+';
+    $('#earned').textContent = sign + '$' + Math.abs(state.earned);
 
     // здоровье
     $('#health').textContent = state.health;
@@ -333,10 +363,12 @@
 
   // инициализация полей из state
   $('#moneyInput').value = state.money;
+  $('#earnedInput').value = state.earned;
   $('#healthInput').value = state.health;  $('#hpVal').textContent = state.health;
   $('#starsInput').value = state.stars;    $('#starVal').textContent = state.stars;
 
   $('#moneyInput').addEventListener('input', e => { state.money = num(e.target.value,0); render(); });
+  $('#earnedInput').addEventListener('input', e => { state.earned = num(e.target.value,0); render(); });
   $('#healthInput').addEventListener('input', e => { state.health = +e.target.value; $('#hpVal').textContent = state.health; render(); });
   $('#starsInput').addEventListener('input', e => { state.stars = +e.target.value; $('#starVal').textContent = state.stars; render(); });
 
@@ -344,6 +376,7 @@
   $('#copyBtn').addEventListener('click', () => {
     const p = new URLSearchParams();
     p.set('money', state.money);
+    if(state.earned) p.set('earned', state.earned);
     p.set('health', state.health);
     p.set('stars', state.stars);
     const url = location.origin + location.pathname + '?' + p.toString();

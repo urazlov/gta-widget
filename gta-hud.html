@@ -161,7 +161,7 @@
   #gear:hover{ background:#2a2a30; }
 
   #panel{
-    position:fixed; bottom:64px; left:14px; z-index:50;
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:50;
     width:300px; max-height:82vh; overflow:auto;
     background:#16161acc; backdrop-filter:blur(8px);
     border:1px solid #3a3a40; border-radius:14px; padding:16px;
@@ -213,7 +213,7 @@
   <!-- кнопка-шестерёнка и панель: НЕ видны в записи, если оверлей открыт как Browser Source -->
   <button id="gear" title="Настройки (S)">⚙</button>
   <div id="panel">
-    <h2>Настройка HUD</h2>
+    <h2>Настройка</h2>
 
     <div class="field">
       <label>Деньги ($)</label>
@@ -231,9 +231,8 @@
     </div>
 
     <div class="field">
-      <button id="copyBtn">Скопировать ссылку для Browser Source</button>
+      <button id="copyBtn">Скопировать ссылку для</button>
       <div class="copied" id="copied"></div>
-      <div class="hint">Эта ссылка «запомнит» текущие настройки — вставь её в источник браузера в OBS/Streamlabs.</div>
     </div>
   </div>
 
@@ -323,6 +322,7 @@
   // ---------- панель ----------
   const panel = $('#panel');
   $('#gear').addEventListener('click', () => togglePanel());
+  $('#avatar').addEventListener('click', () => togglePanel());
   document.addEventListener('keydown', e => {
     if(e.key === 's' || e.key === 'ы' || e.key === 'S') togglePanel();
   });
